@@ -1,0 +1,38 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: Contract
+    network: rinkeby
+    source:
+      address: "0xE1E0d2291911001b1B975F3ED9920816d7397995"
+      abi: Contract
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - assigned
+        - taskClaimed
+        - taskCompleted
+        - taskForReviewed
+        - taskReviewRevoke
+        - taskSubmitted
+      abis:
+        - name: Contract
+          file: ./abis/Contract.json
+      eventHandlers:
+        - event: assigned(uint256,address)
+          handler: handleassigned
+        - event: taskClaimed(uint256,address,uint256)
+          handler: handletaskClaimed
+        - event: taskCompleted(uint256,uint256)
+          handler: handletaskCompleted
+        - event: taskForReviewed(uint256)
+          handler: handletaskForReviewed
+        - event: taskReviewRevoke(uint256)
+          handler: handletaskReviewRevoke
+        - event: taskSubmitted(uint256,uint256,string,uint256)
+          handler: handletaskSubmitted
+      file: ./src/mapping.ts

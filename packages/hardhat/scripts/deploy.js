@@ -8,6 +8,7 @@ async function main() {
   await kanban.deployed();
 
   console.log("ToKanBan deployed to:", kanban.address);
+  //0xE1E0d2291911001b1B975F3ED9920816d7397995
 }
 
 main()
