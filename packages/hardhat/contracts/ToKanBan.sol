@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 contract ToKanBan{
     //Events
     event taskSubmitted(uint task_id, uint funds, string detail);
-    event taskRequested(uint task_id, address raider);
+    event taskRequested(uint task_id, address raider, uint requestId);
     event assigned(uint  task_id,address raiderApproved);
     event taskForReviewed(uint task_id);
     event taskReviewRevoke(uint _taskid);
@@ -32,7 +32,7 @@ contract ToKanBan{
         bool assigned;
         address payable raider;
         bool reviewed;
-        bool close;
+        bool closed;
     }
 
     // Modfier restricting access to PM
@@ -47,33 +47,36 @@ contract ToKanBan{
     }
         
     //Submitting a task 
-    function submitTask(uint _funds,string memory _details) public onlyPM{
-        _taskIds.increment();
+    function submitTask(uint _funds,string memory _details) public payable onlyPM{
+        require(_funds == msg.value, "Funds do not match");
         uint id = _taskIds.current();
 
         taskLog[id].funds= _funds;
         taskLog[id].details= _details;
         taskLog[id].reviewed=false;
-        taskLog[id].close=false;
+        taskLog[id].closed=false;
+
+        _taskIds.increment();
         emit taskSubmitted(id, _funds, _details);
     }
 
     //Task requested by a raider
     function requestTask(uint _id) public{
         taskLog[_id].requests.push(payable(msg.sender));
-        emit taskRequested(_id,msg.sender);
+        uint requestId = taskLog[_id].requests.length;
+        emit taskRequested(_id, msg.sender, requestId);
     }
     
     //View Raider who have requested a Task
-    function viewRequests(uint _taskid,uint _claimantid) view public returns(address, uint){
-        return (taskLog[_taskid].requests[_claimantid],taskLog[_taskid].funds);
+    function viewRequests(uint _taskid, uint _requestId) view public returns(address, uint){
+        return (taskLog[_taskid].requests[_requestId], taskLog[_taskid].funds);
     }
 
     //Raider approved by PM
-    function taskAssignedToRaider(uint _taskid,uint _claimantid) public onlyPM{
-        taskLog[_taskid].raider = taskLog[_taskid].requests[_claimantid];
+    function assignTaskToRaider(uint _taskid, uint _requestId) public onlyPM{
+        taskLog[_taskid].raider = taskLog[_taskid].requests[_requestId];
         taskLog[_taskid].assigned=true;
-        emit assigned(_taskid,taskLog[_taskid].requests[_claimantid]);
+        emit assigned(_taskid,taskLog[_taskid].requests[_requestId]);
     }
     
     //task sent for review by PM by Raider
@@ -92,11 +95,14 @@ contract ToKanBan{
     //task marked complete by PM
     function taskComplete(uint _taskid) public onlyPM{
         require(taskLog[_taskid].reviewed==true,"The task has not been sent for review");
-        address payable temp=taskLog[_taskid].raider;
-        temp.transfer(taskLog[_taskid].funds);
+
+        uint funds = taskLog[_taskid].funds;
+        address payable raider = taskLog[_taskid].raider;
+
+        raider.transfer(funds);
         taskLog[_taskid].funds=0;
-        taskLog[_taskid].close=true;
-        emit taskCompleted(_taskid, taskLog[_taskid].funds);
+        taskLog[_taskid].closed=true;
+        emit taskCompleted(_taskid, funds);
     }
     
      //the contract can receive ether from external contract
