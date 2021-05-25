@@ -1,0 +1,7 @@
+{
+  "name": "ToKanBan",
+  "version": "1.0.0",
+  "description": "Eth Kanban Project",
+  "main": "index.js",
+  "license": "MIT"
+}
