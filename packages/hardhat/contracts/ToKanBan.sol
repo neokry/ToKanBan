@@ -2,31 +2,24 @@
 
 pragma solidity >=0.7.0 <=0.8.0;
 
-contract ToKanBan{
-    uint public id=0;
-    address public pm;
+import "@openzeppelin/contracts/utils/Counters.sol";
 
-    //Events:
-    event taskSubmitted(uint task_id, uint funds, string detail, uint claims);
-    event taskRequested(uint task_id, address raider, uint numberOfClaims);
+contract ToKanBan{
+    //Events
+    event taskSubmitted(uint task_id, uint funds, string detail);
+    event taskRequested(uint task_id, address raider);
     event assigned(uint  task_id,address raiderApproved);
     event taskForReviewed(uint task_id);
     event taskReviewRevoke(uint _taskid);
     event taskCompleted(uint task_id, uint fundReleased);
 
-    // event execute (bool success, bytes data);
-    // event taskRevoked(uint _id,address revokedBy);
-    
-    //setting the PM
-    function setPM(address _pm) public {
-        pm = _pm;
-    }
-    
-    // Modfier restricting access to PM
-    modifier onlyPM(){
-        require(pm == msg.sender,"Only the ");
-        _;
-    }
+    //Globals
+    using Counters for Counters.Counter;
+    Counters.Counter private _taskIds;
+    address public pm;
+
+    //task log would record all the task within a Project/contract
+    mapping(uint => task) public taskLog;
     
     //structure of each task which would need to be requested by Raider and approved by PM
     struct task{
@@ -42,26 +35,36 @@ contract ToKanBan{
         bool reviewed;
         bool close;
     }
-    
-    //task log would record all the task within a Project/contract
-    mapping(uint => task) public taskLog;
+
+    // Modfier restricting access to PM
+    modifier onlyPM(){
+        require(pm == msg.sender,"Only the ");
+        _;
+    }
+
+    //setting the PM
+    function setPM(address _pm) public {
+        pm = _pm;
+    }
         
     //Submitting a task 
     function submitTask(uint _funds,string memory _details) public onlyPM{
+        _taskIds.increment();
+        uint id = _taskIds.current();
+
         taskLog[id].funds= _funds;
         taskLog[id].details= _details;
         taskLog[id].claims=0;
         taskLog[id].reviewed=false;
         taskLog[id].close=false;
-        emit taskSubmitted(id, _funds, _details,0);
-        id++;
+        emit taskSubmitted(id, _funds, _details);
     }
 
     //Task requested by a raider
     function requestTask(uint _id) public{
         taskLog[_id].requests.push(payable(msg.sender));
         taskLog[_id].claims=taskLog[_id].requests.length;
-        emit taskRequested(_id,msg.sender,taskLog[_id].claims);
+        emit taskRequested(_id,msg.sender);
     }
     
     //View Raider who have requested a Task
@@ -96,7 +99,7 @@ contract ToKanBan{
         temp.transfer(taskLog[_taskid].funds);
         taskLog[_taskid].funds=0;
         taskLog[_taskid].close=true;
-        emit taskCompleted(_taskid, taskLog[_taskid].funds );
+        emit taskCompleted(_taskid, taskLog[_taskid].funds);
     }
     
      //the contract can receive ether from external contract
