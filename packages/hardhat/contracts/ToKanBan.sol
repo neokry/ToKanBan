@@ -8,7 +8,7 @@ contract ToKanBan{
 
     //Events:
     event taskSubmitted(uint task_id, uint funds, string detail, uint claims);
-    event taskClaimed(uint task_id,address raiderToClaim, uint _umberOfClaims);
+    event taskRequested(uint task_id, address raider, uint numberOfClaims);
     event assigned(uint  task_id,address raiderApproved);
     event taskForReviewed(uint task_id);
     event taskReviewRevoke(uint _taskid);
@@ -28,7 +28,7 @@ contract ToKanBan{
         _;
     }
     
-    //structure of each task request whihc would need to be claimed by Raider and approved by PM
+    //structure of each task which would need to be requested by Raider and approved by PM
     struct task{
         //task details
         string details; //describing the details of the task
@@ -36,7 +36,7 @@ contract ToKanBan{
 
         //raider details
         uint claims;
-        address payable[] raidersWhoClaimed;
+        address payable[] requests;
         bool assigned;
         address payable raider;
         bool reviewed;
@@ -57,23 +57,23 @@ contract ToKanBan{
         id++;
     }
 
-    //Task claimed by a raider
-    function claimTask(uint _id) public{
-        taskLog[_id].raidersWhoClaimed.push(payable(msg.sender));
-        taskLog[_id].claims=taskLog[_id].raidersWhoClaimed.length;
-        emit taskClaimed(_id,msg.sender,taskLog[_id].claims);
+    //Task requested by a raider
+    function requestTask(uint _id) public{
+        taskLog[_id].requests.push(payable(msg.sender));
+        taskLog[_id].claims=taskLog[_id].requests.length;
+        emit taskRequested(_id,msg.sender,taskLog[_id].claims);
     }
     
-    //View Raider who have claimed a Task
-    function viewClaimants(uint _taskid,uint _claimantid) view public returns(address, uint){
-        return (taskLog[_taskid].raidersWhoClaimed[_claimantid],taskLog[_taskid].funds);
+    //View Raider who have requested a Task
+    function viewRequests(uint _taskid,uint _claimantid) view public returns(address, uint){
+        return (taskLog[_taskid].requests[_claimantid],taskLog[_taskid].funds);
     }
 
     //Raider approved by PM
     function taskAssignedToRaider(uint _taskid,uint _claimantid) public onlyPM{
-        taskLog[_taskid].raider = taskLog[_taskid].raidersWhoClaimed[_claimantid];
+        taskLog[_taskid].raider = taskLog[_taskid].requests[_claimantid];
         taskLog[_taskid].assigned=true;
-        emit assigned(_taskid,taskLog[_taskid].raidersWhoClaimed[_claimantid]);
+        emit assigned(_taskid,taskLog[_taskid].requests[_claimantid]);
     }
     
     //task sent for review by PM by Raider
