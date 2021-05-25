@@ -1,6 +1,22 @@
-type ExampleEntity @entity {
+type Task @entity {
   id: ID!
-  count: BigInt!
-  task_id: BigInt! # uint256
-  raiderApproved: Bytes! # address
+  funds: BigInt!
+  detail: String
+  claims: BigInt!
+  requests: [TaskRequsts!] @derivedFrom(field: "raider")
+  raider: Raider
+  reviewed: Bool
+  completed: Bool
+}
+
+type Raider @entity {
+  id: ID!
+  requests: [TaskRequsts!] @derivedFrom(field: "task")
+  tasks: [TaskAssignments!] @derivedFrom(field: "raider")
+}
+
+type TaskRequsts @entity {
+  id: ID!
+  task: Task!
+  raider: Raider!
 }
