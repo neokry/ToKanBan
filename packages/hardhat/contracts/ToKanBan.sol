@@ -10,7 +10,7 @@ contract ToKanBan{
     event taskRequested(uint task_id, address raider, uint requestId);
     event assigned(uint  task_id,address raiderApproved);
     event taskForReviewed(uint task_id);
-    event taskReviewRevoke(uint _taskid);
+    event taskReviewRevoke(uint task_id);
     event taskCompleted(uint task_id, uint fundReleased);
 
     //Globals

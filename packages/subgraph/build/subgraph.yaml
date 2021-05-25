@@ -1,6 +1,6 @@
 specVersion: 0.0.2
 schema:
-  file: ./schema.graphql
+  file: schema.graphql
 dataSources:
   - kind: ethereum/contract
     name: Contract
@@ -22,7 +22,7 @@ dataSources:
         - taskSubmitted
       abis:
         - name: Contract
-          file: ./abis/Contract.json
+          file: Contract/abis/Contract.json
       eventHandlers:
         - event: assigned(uint256,address)
           handler: handleAssigned
@@ -36,4 +36,4 @@ dataSources:
           handler: handleTaskReviewRevoke
         - event: taskSubmitted(uint256,uint256,string)
           handler: handleTaskSubmitted
-      file: ./src/mapping.ts
+      file: Contract/Contract.wasm
