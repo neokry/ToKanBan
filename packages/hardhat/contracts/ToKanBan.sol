@@ -28,7 +28,6 @@ contract ToKanBan{
         uint funds; //funds allocated to the task 
 
         //raider details
-        uint claims;
         address payable[] requests;
         bool assigned;
         address payable raider;
@@ -54,7 +53,6 @@ contract ToKanBan{
 
         taskLog[id].funds= _funds;
         taskLog[id].details= _details;
-        taskLog[id].claims=0;
         taskLog[id].reviewed=false;
         taskLog[id].close=false;
         emit taskSubmitted(id, _funds, _details);
@@ -63,7 +61,6 @@ contract ToKanBan{
     //Task requested by a raider
     function requestTask(uint _id) public{
         taskLog[_id].requests.push(payable(msg.sender));
-        taskLog[_id].claims=taskLog[_id].requests.length;
         emit taskRequested(_id,msg.sender);
     }
     
