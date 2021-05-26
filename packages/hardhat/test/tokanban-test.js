@@ -23,35 +23,35 @@ describe("ToKanBan", function () {
   });
 
   given("no PM has been set", async function () {
-    then("setPM succeeds", async function () {
+    then("a PM can be set by anybody", async function () {
       await this.kanban.setPM(this.accounts[0].address);
       const pm = await this.kanban.pm();
 
       expect(pm).equals(this.accounts[0].address);
     });
 
-    then("submitTask fails", async function () {
+    then("tasks can't be submitted", async function () {
       await expect(
         this.kanban.submitTask(1000, "Update the README")
       ).to.be.rejectedWith("This function requires a PM to have been set");
     });
 
-    then("assignTaskToRaider fails", async function () {
-      await expect(
-        this.kanban.assignTaskToRaider(1, 1)
-      ).to.be.rejectedWith("This function requires a PM to have been set");
+    then("tasks can't be assigned to Raiders", async function () {
+      await expect(this.kanban.assignTaskToRaider(1, 1)).to.be.rejectedWith(
+        "This function requires a PM to have been set"
+      );
     });
 
-    then("taskReviewRevoked fails", async function () {
-      await expect(
-        this.kanban.taskReviewRevoked(1)
-      ).to.be.rejectedWith("This function requires a PM to have been set");
+    then("task reviews can't be revoked", async function () {
+      await expect(this.kanban.taskReviewRevoked(1)).to.be.rejectedWith(
+        "This function requires a PM to have been set"
+      );
     });
 
-    then("taskComplete fails", async function () {
-      await expect(
-        this.kanban.taskComplete(1)
-      ).to.be.rejectedWith("This function requires a PM to have been set");
+    then("tasks can't be marked as complete", async function () {
+      await expect(this.kanban.taskComplete(1)).to.be.rejectedWith(
+        "This function requires a PM to have been set"
+      );
     });
   });
 
@@ -62,7 +62,7 @@ describe("ToKanBan", function () {
       await this.kanban.setPM(this.accounts[0].address);
     })
 
-    then("submitTask succeeds", async function () {
+    then("tasks can be submitted", async function () {
       const value = ethers.utils.parseEther("1");
       const details = "A sample task";
       await this.kanban.submitTask(value, details, { value: value });
@@ -73,7 +73,7 @@ describe("ToKanBan", function () {
       expect(task.details).equals(details);
     });
 
-    then("taskComplete succeeds", async function () {
+    then("tasks can be marked as complete", async function () {
       const value = ethers.utils.parseEther("1");
       const details = "A sample task";
       await this.kanban.submitTask(value, details, { value: value });
@@ -85,10 +85,12 @@ describe("ToKanBan", function () {
       const task = await this.kanban.taskLog(0);
 
       expect(task.closed).to.be.true;
-      expect(task.funds.toHexString()).equals(BigNumber.from("0").toHexString());
+      expect(task.funds.toHexString()).equals(
+        BigNumber.from("0").toHexString()
+      );
     });
 
-    then("assignTaskToRaider succeeds", async function () {
+    then("tasks can be assigned to a raider", async function () {
       const value = ethers.utils.parseEther("1");
       const details = "A sample task";
       await this.kanban.submitTask(value, details, { value: value });
