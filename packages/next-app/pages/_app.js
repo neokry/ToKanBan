@@ -1,7 +1,12 @@
-import '../styles/globals.css'
+import "tailwindcss/tailwind.css";
+import GlobalProvider from "../containers";
 
 function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />
+  return (
+    <GlobalProvider>
+      <Component {...pageProps} />
+    </GlobalProvider>
+  );
 }
 
-export default MyApp
+export default MyApp;
