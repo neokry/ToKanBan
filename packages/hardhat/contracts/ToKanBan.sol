@@ -44,6 +44,7 @@ contract ToKanBan{
 
     //setting the PM
     function setPM(address _pm) public {
+        require(pm == address(0), "The PM has already been set");
         pm = _pm;
     }
 
