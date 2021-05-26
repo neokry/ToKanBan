@@ -3,8 +3,9 @@
 pragma solidity >=0.7.0 <=0.8.0;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract ToKanBan{
+contract ToKanBan is ReentrancyGuard{
     //Events
     event taskSubmitted(uint task_id, uint funds, string detail);
     event taskRequested(uint task_id, address raider, uint requestId);
@@ -12,12 +13,20 @@ contract ToKanBan{
     event taskForReviewed(uint task_id);
     event taskReviewRevoke(uint task_id);
     event taskCompleted(uint task_id, uint fundReleased);
-
+    
     //Globals
     using Counters for Counters.Counter;
+    
     Counters.Counter private _taskIds;
     address public pm;
-
+    address public client; //address that transfer ether to the contract
+    uint public contractBalance=0;
+    
+    constructor(address _pm, address _client) public {
+        client = _client;
+        pm = _pm;
+    }
+    
     //task log would record all the task within a Project/contract
     mapping(uint => task) public taskLog;
     
@@ -32,6 +41,7 @@ contract ToKanBan{
         bool assigned;
         address payable raider;
         bool reviewed;
+        mapping(address => bool) approvals;
         bool closed;
     }
 
@@ -40,22 +50,27 @@ contract ToKanBan{
         require(pm == msg.sender,"Only the ");
         _;
     }
+    
 
-    //setting the PM
-    function setPM(address _pm) public {
-        pm = _pm;
-    }
+    // //setting the PM
+    // function setPM(address _pm) public {
+    //     pm = _pm;
+    // }
         
     //Submitting a task 
-    function submitTask(uint _funds,string memory _details) public payable onlyPM{
-        require(_funds == msg.value, "Funds do not match");
+    function submitTask(uint _funds,string memory _details) public onlyPM{
+        require(_funds >= contractBalance,"Not enough funds");
         uint id = _taskIds.current();
-
+        
         taskLog[id].funds= _funds;
         taskLog[id].details= _details;
         taskLog[id].reviewed=false;
         taskLog[id].closed=false;
+        taskLog[id].approvals[pm]=false;
+        taskLog[id].approvals[client]= false;
 
+        
+        contractBalance=contractBalance-_funds;
         _taskIds.increment();
         emit taskSubmitted(id, _funds, _details);
     }
@@ -81,36 +96,46 @@ contract ToKanBan{
     
     //task sent for review by PM by Raider
     function taskForReview(uint _taskid) public{
-        require((taskLog[_taskid].raider==msg.sender || pm == msg.sender), "Dont have the access to send the task for review"); 
+        require((taskLog[_taskid].raider==msg.sender), "Dont have the access to send the task for review"); 
         taskLog[_taskid].reviewed=true;
         emit taskForReviewed(_taskid);
     }
     
+    
     //task reviewed and not accepted
-    function taskReviewRevoked(uint _taskid) public onlyPM{
+    function taskReviewRevoked(uint _taskid) public {
+        require(pm==msg.sender || client == msg.sender,"You are not the approver");
         taskLog[_taskid].reviewed=false;
         emit taskReviewRevoke(_taskid);
     }
     
-    //task marked complete by PM
-    function taskComplete(uint _taskid) public onlyPM{
+    //task APPROVED by PM and Client
+    function taskApproved(uint _taskid) public nonReentrant{
         require(taskLog[_taskid].reviewed==true,"The task has not been sent for review");
+        require(pm==msg.sender || client == msg.sender,"You are not the approver");
+        if(pm==msg.sender){
+            taskLog[_taskid].approvals[pm]= true;
+        }
+        
+        if(client==msg.sender){
+            taskLog[_taskid].approvals[client]= true;
+        }
+            
+        if(taskLog[_taskid].approvals[client]== true && taskLog[_taskid].approvals[pm]== true){
+            uint funds = taskLog[_taskid].funds;
+            address payable raider = taskLog[_taskid].raider;
 
-        uint funds = taskLog[_taskid].funds;
-        address payable raider = taskLog[_taskid].raider;
-
-        raider.transfer(funds);
-        taskLog[_taskid].funds=0;
-        taskLog[_taskid].closed=true;
-        emit taskCompleted(_taskid, funds);
+            raider.transfer(funds);
+            taskLog[_taskid].funds=0;
+            taskLog[_taskid].closed=true;
+            emit taskCompleted(_taskid, funds);    
+        }
+        
     }
     
      //the contract can receive ether from external contract
     function payContract() external payable {
-    }
-    
-    //checking the balance of the contract
-    function getBalance() view public returns(uint){
-        return address(this).balance;
+        require(client==msg.sender,"Client can only send funds to this KanBan Board");
+        contractBalance = contractBalance + msg.value;    
     }
 }    
