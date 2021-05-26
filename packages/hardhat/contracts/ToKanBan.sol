@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 contract ToKanBan is ReentrancyGuard{
     //Events
-    egit vent taskSubmitted(uint task_id, uint funds, string detail);
+    event taskSubmitted(uint task_id, uint funds, string detail);
     event taskRequested(uint task_id, address raider, uint requestId);
     event assigned(uint  task_id,address raiderApproved);
     event taskForReviewed(uint task_id);
