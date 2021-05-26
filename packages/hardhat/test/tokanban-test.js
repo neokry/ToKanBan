@@ -62,6 +62,12 @@ describe("ToKanBan", function () {
       await this.kanban.setPM(this.accounts[0].address);
     })
 
+    then("the PM can't be set again", async function () {
+      await expect(
+        this.kanban.setPM(this.accounts[0].address)
+      ).to.be.rejectedWith("The PM has already been set");
+    });
+
     then("tasks can be submitted", async function () {
       const value = ethers.utils.parseEther("1");
       const details = "A sample task";
