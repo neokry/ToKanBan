@@ -111,14 +111,9 @@ contract ToKanBan is ReentrancyGuard{
     function taskApproved(uint _taskid) public nonReentrant{
         require(taskLog[_taskid].reviewed==true,"The task has not been sent for review");
         require(pm==msg.sender || funder == msg.sender,"You are not the approver");
-        if(pm==msg.sender){
-            taskLog[_taskid].approvals[pm]= true;
-        }
-        
-        if(funder==msg.sender){
-            taskLog[_taskid].approvals[funder]= true;
-        }
+        taskLog[_taskid].approvals[msg.sender]= true;
             
+        //if both M and funder has approved then the task will be marked complete    
         if(taskLog[_taskid].approvals[funder]== true && taskLog[_taskid].approvals[pm]== true){
             uint funds = taskLog[_taskid].funds;
             address payable raider = taskLog[_taskid].raider;
