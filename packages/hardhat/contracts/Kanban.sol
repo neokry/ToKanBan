@@ -22,14 +22,17 @@ contract Kanban is ReentrancyGuard{
     address public funder; //address that transfer ether to the contract
     uint public contractBalance=0; //to check if there is enough fund inthe contract
     
-      constructor() {
-        pm = msg.sender;
+    //setting the PM
+    function setPM(address _pm) public {
+        require(pm == address(0), "The PM has already been set");
+        pm = _pm;
     }
     
     //the contract can receive ether from external contract
-    function payContract() external payable {
-        funder =msg.sender;
-        contractBalance = contractBalance + msg.value;    
+    function payContract(uint amount) external payable {
+        require(amount == msg.value, "Incorrect amount sent");
+        funder = msg.sender;
+        contractBalance += msg.value;    
     }
 
     //task log would record all the task within a Project/contract
@@ -65,7 +68,8 @@ contract Kanban is ReentrancyGuard{
     }*/
 
     //Submitting a task
-    function submitTask(uint _funds,string memory _details) public payable onlyPM{
+    function submitTask(uint _funds,string memory _details) public payable onlyPM {
+        require(pm != address(0), "This function requires a PM to have been set");
         require(_funds <= contractBalance,"Not enough funds"); //checking if the contract has enough funds before allocating funds to the task
         uint id = _taskIds.current();
 
@@ -109,6 +113,7 @@ contract Kanban is ReentrancyGuard{
 
     //task reviewed and not accepted
     function taskReviewRevoked(uint _taskid) public {
+        require(pm != address(0), "This function requires a PM to have been set");
         require(pm==msg.sender || funder == msg.sender,"You are not the approver");
         taskLog[_taskid].reviewed=false;
         emit taskReviewRevoke(_taskid);
@@ -116,6 +121,7 @@ contract Kanban is ReentrancyGuard{
 
      //task Approved by PM and funder
      function taskApproved(uint _taskid) public nonReentrant{
+        require(pm != address(0), "This function requires a PM to have been set");
         require(taskLog[_taskid].reviewed==true,"The task has not been sent for review");
         require(pm==msg.sender || funder == msg.sender,"You are not the approver");
         taskLog[_taskid].approvals[msg.sender]= true;

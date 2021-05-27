@@ -25,9 +25,10 @@ interface KanbanInterface extends ethers.utils.Interface {
     "assignTaskToRaider(uint256,uint256)": FunctionFragment;
     "contractBalance()": FunctionFragment;
     "funder()": FunctionFragment;
-    "payContract()": FunctionFragment;
+    "payContract(uint256)": FunctionFragment;
     "pm()": FunctionFragment;
     "requestTask(uint256)": FunctionFragment;
+    "setPM(address)": FunctionFragment;
     "submitTask(uint256,string)": FunctionFragment;
     "taskApproved(uint256)": FunctionFragment;
     "taskForReview(uint256)": FunctionFragment;
@@ -47,13 +48,14 @@ interface KanbanInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "funder", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "payContract",
-    values?: undefined
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "pm", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "requestTask",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "setPM", values: [string]): string;
   encodeFunctionData(
     functionFragment: "submitTask",
     values: [BigNumberish, string]
@@ -97,6 +99,7 @@ interface KanbanInterface extends ethers.utils.Interface {
     functionFragment: "requestTask",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setPM", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "submitTask", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "taskApproved",
@@ -188,6 +191,7 @@ export class Kanban extends BaseContract {
     funder(overrides?: CallOverrides): Promise<[string]>;
 
     payContract(
+      amount: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -195,6 +199,11 @@ export class Kanban extends BaseContract {
 
     requestTask(
       _id: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setPM(
+      _pm: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -251,6 +260,7 @@ export class Kanban extends BaseContract {
   funder(overrides?: CallOverrides): Promise<string>;
 
   payContract(
+    amount: BigNumberish,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -258,6 +268,11 @@ export class Kanban extends BaseContract {
 
   requestTask(
     _id: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setPM(
+    _pm: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -313,11 +328,13 @@ export class Kanban extends BaseContract {
 
     funder(overrides?: CallOverrides): Promise<string>;
 
-    payContract(overrides?: CallOverrides): Promise<void>;
+    payContract(amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     pm(overrides?: CallOverrides): Promise<string>;
 
     requestTask(_id: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    setPM(_pm: string, overrides?: CallOverrides): Promise<void>;
 
     submitTask(
       _funds: BigNumberish,
@@ -417,6 +434,7 @@ export class Kanban extends BaseContract {
     funder(overrides?: CallOverrides): Promise<BigNumber>;
 
     payContract(
+      amount: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -424,6 +442,11 @@ export class Kanban extends BaseContract {
 
     requestTask(
       _id: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setPM(
+      _pm: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -469,6 +492,7 @@ export class Kanban extends BaseContract {
     funder(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     payContract(
+      amount: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -476,6 +500,11 @@ export class Kanban extends BaseContract {
 
     requestTask(
       _id: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setPM(
+      _pm: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
