@@ -19,6 +19,9 @@ describe("Kanban", function () {
   beforeEach(async function () {
     this.kanban = await this.Kanban.deploy();
     await this.kanban.deployed();
+
+    const value = ethers.utils.parseEther("1");
+    await this.kanban.payContract(value, { value: value });
   });
 
   given("no PM has been set", async function () {
@@ -48,7 +51,7 @@ describe("Kanban", function () {
     });
 
     then("tasks can't be marked as complete", async function () {
-      await expect(this.kanban.taskComplete(1)).to.be.rejectedWith(
+      await expect(this.kanban.taskApproved(1)).to.be.rejectedWith(
         "This function requires a PM to have been set"
       );
     });
@@ -83,7 +86,7 @@ describe("Kanban", function () {
       await this.kanban.requestTask(0);
       await this.kanban.assignTaskToRaider(0, 0);
       await this.kanban.taskForReview(0);
-      await this.kanban.taskComplete(0);
+      await this.kanban.taskApproved(0);
 
       const task = await this.kanban.taskLog(0);
 
