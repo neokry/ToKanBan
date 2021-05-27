@@ -52,7 +52,7 @@ contract ToKanBan is ReentrancyGuard{
 
     // Modfier restricting access to PM
     modifier onlyPM(){
-        require(pm == msg.sender,"Only the PM can access this ");
+        require(pm == msg.sender,"Only the ");
         _;
     }
     
