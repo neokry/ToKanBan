@@ -3,7 +3,7 @@
 pragma solidity >=0.7.0 <=0.8.0;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 
 contract Kanban is ReentrancyGuard{
