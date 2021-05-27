@@ -1,3 +1,4 @@
+import { dataSource } from "@graphprotocol/graph-ts";
 import {
   assigned,
   taskRequested,
@@ -7,6 +8,9 @@ import {
   taskSubmitted,
 } from "../generated/Contract/Contract";
 import { Raider, Task, TaskRequest } from "../generated/schema";
+
+let context = dataSource.context();
+let kanbanId = context.getString("id");
 
 export function handleAssigned(event: assigned): void {
   let task = new Task(event.params.task_id.toHexString());
@@ -49,6 +53,7 @@ export function handleTaskReviewRevoke(event: taskReviewRevoke): void {
 export function handleTaskSubmitted(event: taskSubmitted): void {
   let task = new Task(event.params.task_id.toHexString());
 
+  task.kanban = kanbanId;
   task.detail = event.params.detail;
   task.funds = event.params.funds;
   task.reviewed = false;

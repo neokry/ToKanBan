@@ -10,10 +10,9 @@ const expect = chai.expect;
 const given = (description, fun) => describe("Given " + description, fun);
 const then = (description, fun) => it(description, fun);
 
-
-describe("ToKanBan", function () {
+describe("Kanban", function () {
   before(async function () {
-    this.Kanban = await ethers.getContractFactory("ToKanBan");
+    this.Kanban = await ethers.getContractFactory("Kanban");
     this.accounts = await ethers.getSigners();
   });
 
@@ -55,12 +54,10 @@ describe("ToKanBan", function () {
     });
   });
 
-
   given("a PM has been set", async function () {
-
-    beforeEach(async function() {
+    beforeEach(async function () {
       await this.kanban.setPM(this.accounts[0].address);
-    })
+    });
 
     then("the PM can't be set again", async function () {
       await expect(
@@ -107,7 +104,6 @@ describe("ToKanBan", function () {
       expect(task.raider).equals(this.accounts[0].address);
       expect(task.assigned).to.be.true;
     });
-
   });
 
   it("Should request tasks", async function () {
@@ -135,5 +131,4 @@ describe("ToKanBan", function () {
     const task = await this.kanban.taskLog(0);
     expect(task.reviewed).to.be.true;
   });
-
 });

@@ -3,12 +3,31 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: Contract
+    name: KanbanFactory
     network: rinkeby
     source:
-      address: "0x047712a5f9d102C0D78c5bc6D61BEf8e973f99AB"
-      abi: Contract
+      address: "0x1339AfD148DACa7b12Dcd56b6B63E9D84Ed6F8d2"
+      abi: KanbanFactory
       startBlock: 8609900
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - kanbanCreated
+      abis:
+        - name: KanbanFactory
+          file: ./abis/KanbanFactory.json
+      eventHandlers:
+        - event: kanbanCreated(uint256,address,address)
+          handler: handleKanbanCreated
+      file: ./src/kanban-factory.ts
+templates:
+  - name: Kanban
+    kind: ethereum/contract
+    network: rinkeby
+    source:
+      abi: Kanban
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -21,8 +40,8 @@ dataSources:
         - taskReviewRevoke
         - taskSubmitted
       abis:
-        - name: Contract
-          file: ./abis/Contract.json
+        - name: Kanban
+          file: ./abis/Kanban.json
       eventHandlers:
         - event: assigned(uint256,address)
           handler: handleAssigned
@@ -36,4 +55,4 @@ dataSources:
           handler: handleTaskReviewRevoke
         - event: taskSubmitted(uint256,uint256,string)
           handler: handleTaskSubmitted
-      file: ./src/mapping.ts
+      file: ./src/kanban.ts

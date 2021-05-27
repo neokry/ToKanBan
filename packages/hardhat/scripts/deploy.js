@@ -2,13 +2,19 @@ const hre = require("hardhat");
 
 async function main() {
   // We get the contract to deploy
-  const Kanban = await hre.ethers.getContractFactory("ToKanBan");
+  const Kanban = await hre.ethers.getContractFactory("Kanban");
   const kanban = await Kanban.deploy();
 
   await kanban.deployed();
 
-  console.log("ToKanBan deployed to:", kanban.address);
-  //0xE1E0d2291911001b1B975F3ED9920816d7397995
+  console.log("Kanban deployed to:", kanban.address);
+
+  const KanbanFactory = await hre.ethers.getContractFactory("KanbanFactory");
+  const kanbanFactory = await KanbanFactory.deploy(kanban.address);
+
+  await kanbanFactory.deployed();
+
+  console.log("Kanban factory deployed to:", kanbanFactory.address);
 }
 
 main()
