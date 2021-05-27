@@ -9,6 +9,8 @@ export function handleKanbanCreated(event: kanbanCreated): void {
   let kanbanBoard = new KanbanBoard(event.params.id.toHexString());
   kanbanBoard.creator = event.params.creator;
   kanbanBoard.address = event.params.instance;
+  kanbanBoard.title = event.params.title;
+  kanbanBoard.description = event.params.description;
   kanbanBoard.save();
 
   let context = new DataSourceContext();

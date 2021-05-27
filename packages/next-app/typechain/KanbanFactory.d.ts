@@ -21,16 +21,16 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface KanbanFactoryInterface extends ethers.utils.Interface {
   functions: {
-    "createKanban()": FunctionFragment;
-    "kanbanInstances(uint256)": FunctionFragment;
+    "createKanban(string,string)": FunctionFragment;
+    "kanbanInfo(uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "createKanban",
-    values?: undefined
+    values: [string, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "kanbanInstances",
+    functionFragment: "kanbanInfo",
     values: [BigNumberish]
   ): string;
 
@@ -38,13 +38,10 @@ interface KanbanFactoryInterface extends ethers.utils.Interface {
     functionFragment: "createKanban",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "kanbanInstances",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "kanbanInfo", data: BytesLike): Result;
 
   events: {
-    "kanbanCreated(uint256,address,address)": EventFragment;
+    "kanbanCreated(uint256,address,address,string,string)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "kanbanCreated"): EventFragment;
@@ -95,50 +92,86 @@ export class KanbanFactory extends BaseContract {
 
   functions: {
     createKanban(
+      _title: string,
+      _description: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    kanbanInstances(
+    kanbanInfo(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[string]>;
+    ): Promise<
+      [string, string, string] & {
+        instance: string;
+        title: string;
+        description: string;
+      }
+    >;
   };
 
   createKanban(
+    _title: string,
+    _description: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  kanbanInstances(
+  kanbanInfo(
     arg0: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<string>;
+  ): Promise<
+    [string, string, string] & {
+      instance: string;
+      title: string;
+      description: string;
+    }
+  >;
 
   callStatic: {
-    createKanban(overrides?: CallOverrides): Promise<void>;
+    createKanban(
+      _title: string,
+      _description: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    kanbanInstances(
+    kanbanInfo(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<
+      [string, string, string] & {
+        instance: string;
+        title: string;
+        description: string;
+      }
+    >;
   };
 
   filters: {
     kanbanCreated(
       id?: null,
       creator?: null,
-      instance?: null
+      instance?: null,
+      title?: null,
+      description?: null
     ): TypedEventFilter<
-      [BigNumber, string, string],
-      { id: BigNumber; creator: string; instance: string }
+      [BigNumber, string, string, string, string],
+      {
+        id: BigNumber;
+        creator: string;
+        instance: string;
+        title: string;
+        description: string;
+      }
     >;
   };
 
   estimateGas: {
     createKanban(
+      _title: string,
+      _description: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    kanbanInstances(
+    kanbanInfo(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -146,10 +179,12 @@ export class KanbanFactory extends BaseContract {
 
   populateTransaction: {
     createKanban(
+      _title: string,
+      _description: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    kanbanInstances(
+    kanbanInfo(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

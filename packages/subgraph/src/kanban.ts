@@ -55,6 +55,7 @@ export function handleTaskSubmitted(event: taskSubmitted): void {
   let task = new Task(event.params.task_id.toHexString());
 
   task.kanban = kanbanId;
+  task.title = event.params.title;
   task.detail = event.params.detail;
   task.funds = event.params.funds;
   task.reviewed = false;
