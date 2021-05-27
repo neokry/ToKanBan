@@ -29,7 +29,7 @@ interface KanbanInterface extends ethers.utils.Interface {
     "pm()": FunctionFragment;
     "requestTask(uint256)": FunctionFragment;
     "setPM(address)": FunctionFragment;
-    "submitTask(uint256,string)": FunctionFragment;
+    "submitTask(uint256,string,string)": FunctionFragment;
     "taskApproved(uint256)": FunctionFragment;
     "taskForReview(uint256)": FunctionFragment;
     "taskLog(uint256)": FunctionFragment;
@@ -58,7 +58,7 @@ interface KanbanInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "setPM", values: [string]): string;
   encodeFunctionData(
     functionFragment: "submitTask",
-    values: [BigNumberish, string]
+    values: [BigNumberish, string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "taskApproved",
@@ -125,7 +125,7 @@ interface KanbanInterface extends ethers.utils.Interface {
     "taskForReviewed(uint256)": EventFragment;
     "taskRequested(uint256,address,uint256)": EventFragment;
     "taskReviewRevoke(uint256)": EventFragment;
-    "taskSubmitted(uint256,uint256,string)": EventFragment;
+    "taskSubmitted(uint256,uint256,string,string)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "assigned"): EventFragment;
@@ -209,6 +209,7 @@ export class Kanban extends BaseContract {
 
     submitTask(
       _funds: BigNumberish,
+      _title: string,
       _details: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -227,7 +228,8 @@ export class Kanban extends BaseContract {
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, boolean, string, boolean, boolean] & {
+      [string, string, BigNumber, boolean, string, boolean, boolean] & {
+        title: string;
         details: string;
         funds: BigNumber;
         assigned: boolean;
@@ -278,6 +280,7 @@ export class Kanban extends BaseContract {
 
   submitTask(
     _funds: BigNumberish,
+    _title: string,
     _details: string,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -296,7 +299,8 @@ export class Kanban extends BaseContract {
     arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
-    [string, BigNumber, boolean, string, boolean, boolean] & {
+    [string, string, BigNumber, boolean, string, boolean, boolean] & {
+      title: string;
       details: string;
       funds: BigNumber;
       assigned: boolean;
@@ -338,6 +342,7 @@ export class Kanban extends BaseContract {
 
     submitTask(
       _funds: BigNumberish,
+      _title: string,
       _details: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -356,7 +361,8 @@ export class Kanban extends BaseContract {
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, boolean, string, boolean, boolean] & {
+      [string, string, BigNumber, boolean, string, boolean, boolean] & {
+        title: string;
         details: string;
         funds: BigNumber;
         assigned: boolean;
@@ -415,10 +421,11 @@ export class Kanban extends BaseContract {
     taskSubmitted(
       task_id?: null,
       funds?: null,
+      title?: null,
       detail?: null
     ): TypedEventFilter<
-      [BigNumber, BigNumber, string],
-      { task_id: BigNumber; funds: BigNumber; detail: string }
+      [BigNumber, BigNumber, string, string],
+      { task_id: BigNumber; funds: BigNumber; title: string; detail: string }
     >;
   };
 
@@ -452,6 +459,7 @@ export class Kanban extends BaseContract {
 
     submitTask(
       _funds: BigNumberish,
+      _title: string,
       _details: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -510,6 +518,7 @@ export class Kanban extends BaseContract {
 
     submitTask(
       _funds: BigNumberish,
+      _title: string,
       _details: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

@@ -34,7 +34,7 @@ describe("Kanban", function () {
 
     then("tasks can't be submitted", async function () {
       await expect(
-        this.kanban.submitTask(1000, "Update the README")
+        this.kanban.submitTask(1000, "Test title", "Update the README")
       ).to.be.rejectedWith("This function requires a PM to have been set");
     });
 
@@ -71,7 +71,8 @@ describe("Kanban", function () {
     then("tasks can be submitted", async function () {
       const value = ethers.utils.parseEther("1");
       const details = "A sample task";
-      await this.kanban.submitTask(value, details, { value: value });
+      const title = "Sample title";
+      await this.kanban.submitTask(value, title, details, { value: value });
 
       const task = await this.kanban.taskLog(0);
 
@@ -82,7 +83,8 @@ describe("Kanban", function () {
     then("tasks can be marked as complete", async function () {
       const value = ethers.utils.parseEther("1");
       const details = "A sample task";
-      await this.kanban.submitTask(value, details, { value: value });
+      const title = "Sample title";
+      await this.kanban.submitTask(value, title, details, { value: value });
       await this.kanban.requestTask(0);
       await this.kanban.assignTaskToRaider(0, 0);
       await this.kanban.taskForReview(0);
@@ -99,7 +101,8 @@ describe("Kanban", function () {
     then("tasks can be assigned to a raider", async function () {
       const value = ethers.utils.parseEther("1");
       const details = "A sample task";
-      await this.kanban.submitTask(value, details, { value: value });
+      const title = "Sample title";
+      await this.kanban.submitTask(value, title, details, { value: value });
       await this.kanban.requestTask(0);
       await this.kanban.assignTaskToRaider(0, 0);
 
@@ -114,7 +117,8 @@ describe("Kanban", function () {
 
     const value = ethers.utils.parseEther("1");
     const details = "A sample task";
-    await this.kanban.submitTask(value, details, { value: value });
+    const title = "Sample title";
+    await this.kanban.submitTask(value, title, details, { value: value });
     await this.kanban.requestTask(0);
 
     const raider = await this.kanban.viewRequests(0, 0);
@@ -125,8 +129,9 @@ describe("Kanban", function () {
     await this.kanban.setPM(this.accounts[0].address);
 
     const value = ethers.utils.parseEther("1");
+    const title = "Sample title";
     const details = "A sample task";
-    await this.kanban.submitTask(value, details, { value: value });
+    await this.kanban.submitTask(value, title, details, { value: value });
     await this.kanban.requestTask(0);
     await this.kanban.assignTaskToRaider(0, 0);
     await this.kanban.taskForReview(0);
