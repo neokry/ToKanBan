@@ -6,7 +6,7 @@ dataSources:
     name: KanbanFactory
     network: rinkeby
     source:
-      address: "0x1339AfD148DACa7b12Dcd56b6B63E9D84Ed6F8d2"
+      address: "0x2758dD2b9de60bA164Fe7a70E988922d6D732D41"
       abi: KanbanFactory
       startBlock: 8609900
     mapping:
@@ -19,7 +19,7 @@ dataSources:
         - name: KanbanFactory
           file: ./abis/KanbanFactory.json
       eventHandlers:
-        - event: kanbanCreated(uint256,address,address)
+        - event: kanbanCreated(uint256,address,address,string,string)
           handler: handleKanbanCreated
       file: ./src/kanban-factory.ts
 templates:
@@ -53,6 +53,6 @@ templates:
           handler: handleTaskForReviewed
         - event: taskReviewRevoke(uint256)
           handler: handleTaskReviewRevoke
-        - event: taskSubmitted(uint256,uint256,string)
+        - event: taskSubmitted(uint256,uint256,string,string)
           handler: handleTaskSubmitted
       file: ./src/kanban.ts

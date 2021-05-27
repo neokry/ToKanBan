@@ -106,6 +106,12 @@
       {
         "indexed": false,
         "internalType": "string",
+        "name": "title",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
         "name": "detail",
         "type": "string"
       }
@@ -133,7 +139,7 @@
   },
   {
     "inputs": [],
-    "name": "getBalance",
+    "name": "contractBalance",
     "outputs": [
       {
         "internalType": "uint256",
@@ -146,6 +152,25 @@
   },
   {
     "inputs": [],
+    "name": "funder",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
     "name": "payContract",
     "outputs": [],
     "stateMutability": "payable",
@@ -199,6 +224,11 @@
       },
       {
         "internalType": "string",
+        "name": "_title",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
         "name": "_details",
         "type": "string"
       }
@@ -216,7 +246,7 @@
         "type": "uint256"
       }
     ],
-    "name": "taskComplete",
+    "name": "taskApproved",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -244,6 +274,11 @@
     ],
     "name": "taskLog",
     "outputs": [
+      {
+        "internalType": "string",
+        "name": "title",
+        "type": "string"
+      },
       {
         "internalType": "string",
         "name": "details",
