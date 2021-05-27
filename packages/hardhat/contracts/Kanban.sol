@@ -4,7 +4,7 @@ pragma solidity >=0.7.0 <=0.8.0;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract ToKanBan{
+contract Kanban{
     //Events
     event taskSubmitted(uint task_id, uint funds, string detail);
     event taskRequested(uint task_id, address raider, uint requestId);
