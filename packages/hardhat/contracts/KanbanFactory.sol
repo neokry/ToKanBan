@@ -13,16 +13,16 @@ contract KanbanFactory {
 
   Counters.Counter private _kanbanIds;
   mapping(uint => address) public kanbanInstances;
-	address private baseKanbanAddress;
-
-	constructor(address _baseKanbanAddress) {
-		baseKanbanAddress = _baseKanbanAddress;
-	}
+  address private baseKanbanAddress;
+  
+  constructor(address _baseKanbanAddress) {
+    baseKanbanAddress = _baseKanbanAddress;
+  }
 
   function createKanban() public {
-		address instance = Clones.clone(baseKanbanAddress);
+    address instance = Clones.clone(baseKanbanAddress);
     kanbanInstances[_kanbanIds.current()] = instance;
-		emit kanbanCreated(_kanbanIds.current(), msg.sender, instance);
+    emit kanbanCreated(_kanbanIds.current(), msg.sender, instance);
     _kanbanIds.increment();
   }
 
