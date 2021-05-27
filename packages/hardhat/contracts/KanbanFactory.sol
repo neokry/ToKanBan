@@ -20,10 +20,10 @@ contract KanbanFactory {
   }
 
   function createKanban() public {
+    _kanbanIds.increment();
     address instance = Clones.clone(baseKanbanAddress);
     kanbanInstances[_kanbanIds.current()] = instance;
     emit kanbanCreated(_kanbanIds.current(), msg.sender, instance);
-    _kanbanIds.increment();
   }
 
 }
