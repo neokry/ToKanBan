@@ -19,7 +19,7 @@ contract ToKanBan is ReentrancyGuard{
     
     Counters.Counter private _taskIds;
     address public pm;
-    address public client; //address that transfer ether to the contract
+    address public funder; //address that transfer ether to the contract
     uint public contractBalance=0; //to check if there is enough fund inthe contract
     
     constructor() {
@@ -28,7 +28,7 @@ contract ToKanBan is ReentrancyGuard{
     
     //the contract can receive ether from external contract
     function payContract() external payable {
-        client=msg.sender;
+        funder =msg.sender;
         contractBalance = contractBalance + msg.value;    
     }
     
@@ -66,7 +66,7 @@ contract ToKanBan is ReentrancyGuard{
         taskLog[id].reviewed=false;
         taskLog[id].closed=false;
         taskLog[id].approvals[pm]=false;
-        taskLog[id].approvals[client]= false;
+        taskLog[id].approvals[funder]= false;
 
         contractBalance=contractBalance-_funds;
         _taskIds.increment();
@@ -102,24 +102,24 @@ contract ToKanBan is ReentrancyGuard{
     
     //task reviewed but not accepted
     function taskReviewRevoked(uint _taskid) public {
-        require(pm==msg.sender || client == msg.sender,"You are not the approver");
+        require(pm==msg.sender || funder == msg.sender,"You are not the approver");
         taskLog[_taskid].reviewed=false;
         emit taskReviewRevoke(_taskid);
     }
     
-    //task Approved by PM and Client
+    //task Approved by PM and funder
     function taskApproved(uint _taskid) public nonReentrant{
         require(taskLog[_taskid].reviewed==true,"The task has not been sent for review");
-        require(pm==msg.sender || client == msg.sender,"You are not the approver");
+        require(pm==msg.sender || funder == msg.sender,"You are not the approver");
         if(pm==msg.sender){
             taskLog[_taskid].approvals[pm]= true;
         }
         
-        if(client==msg.sender){
-            taskLog[_taskid].approvals[client]= true;
+        if(funder==msg.sender){
+            taskLog[_taskid].approvals[funder]= true;
         }
             
-        if(taskLog[_taskid].approvals[client]== true && taskLog[_taskid].approvals[pm]== true){
+        if(taskLog[_taskid].approvals[funder]== true && taskLog[_taskid].approvals[pm]== true){
             uint funds = taskLog[_taskid].funds;
             address payable raider = taskLog[_taskid].raider;
 
