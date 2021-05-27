@@ -2,8 +2,12 @@ import { useEffect, useState } from "react";
 import Web3Modal from "web3modal"; // Web3Modal
 import { ethers, providers } from "ethers"; // Ethers
 import { createContainer } from "unstated-next"; // Unstated-next containerization
-import Kanban from "../data/kanban";
-import KanbanFactory from "../data/kanbanFactory";
+import {
+  Kanban__factory as KanbanContact,
+  KanbanFactory__factory as KanbanFactoryContract,
+  Kanban,
+  KanbanFactory,
+} from "../typechain";
 import WalletConnectProvider from "@walletconnect/web3-provider"; // WalletConnectProvider (Web3Modal)
 
 // Web3Modal provider options
@@ -19,8 +23,9 @@ const providerOptions = {
 
 function useWeb3() {
   const [modal, setModal] = useState(null);
-  const [kanban, setKanban] = useState(null);
-  const [kanbanFactory, setKanbanFactory] = useState(null);
+  const [kanban, setKanban] = useState<null | Kanban>(null);
+  const [kanbanFactory, setKanbanFactory] =
+    useState<null | KanbanFactory>(null);
   const [address, setAddress] = useState(null);
   const [signer, setSigner] = useState(null);
 
@@ -56,14 +61,12 @@ function useWeb3() {
     setAddress(address);
 
     const factoryAddress = process.env.NEXT_PUBLIC_FACTORY_ADDRESS;
-    const kbFactory = new KanbanFactory(signer);
-    await kbFactory.connect(factoryAddress);
+    const kbFactory = KanbanFactoryContract.connect(factoryAddress, signer);
     setKanbanFactory(kbFactory);
   };
 
   const selectKanban = async (instance) => {
-    const kb = new Kanban(signer);
-    await kb.connect(instance);
+    const kb = KanbanContact.connect(instance, signer);
     setKanban(kb);
   };
 
