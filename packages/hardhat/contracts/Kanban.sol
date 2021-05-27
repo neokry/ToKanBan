@@ -66,7 +66,7 @@ contract Kanban is ReentrancyGuard{
 
     //Submitting a task
     function submitTask(uint _funds,string memory _details) public payable onlyPM{
-        require(_funds >= contractBalance,"Not enough funds"); //checking if the contract has enough funds before allocating funds to the task
+        require(_funds <= contractBalance,"Not enough funds"); //checking if the contract has enough funds before allocating funds to the task
         uint id = _taskIds.current();
 
         taskLog[id].funds= _funds;
