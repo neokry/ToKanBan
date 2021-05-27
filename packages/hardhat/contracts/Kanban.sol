@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 contract Kanban is ReentrancyGuard{
     //Events
-    event taskSubmitted(uint task_id, uint funds, string detail);
+    event taskSubmitted(uint task_id, uint funds, string title, string detail);
     event taskRequested(uint task_id, address raider, uint requestId);
     event assigned(uint  task_id,address raiderApproved);
     event taskForReviewed(uint task_id);
@@ -41,6 +41,7 @@ contract Kanban is ReentrancyGuard{
     //structure of each task which would need to be requested by Raider and approved by PM
     struct task{
         //task details
+        string title; //title of the task
         string details; //describing the details of the task
         uint funds; //funds allocated to the task
 
@@ -68,12 +69,13 @@ contract Kanban is ReentrancyGuard{
     }*/
 
     //Submitting a task
-    function submitTask(uint _funds,string memory _details) public payable onlyPM {
+    function submitTask(uint _funds, string memory _title, string memory _details) public payable onlyPM {
         require(pm != address(0), "This function requires a PM to have been set");
         require(_funds <= contractBalance,"Not enough funds"); //checking if the contract has enough funds before allocating funds to the task
         uint id = _taskIds.current();
 
         taskLog[id].funds= _funds;
+        taskLog[id].title= _title;
         taskLog[id].details= _details;
         taskLog[id].reviewed=false;
         taskLog[id].closed=false;
@@ -82,7 +84,7 @@ contract Kanban is ReentrancyGuard{
         
         contractBalance=contractBalance-_funds;
         _taskIds.increment();
-        emit taskSubmitted(id, _funds, _details);
+        emit taskSubmitted(id, _funds, _title, _details);
     }
 
     //Task requested by a raider
