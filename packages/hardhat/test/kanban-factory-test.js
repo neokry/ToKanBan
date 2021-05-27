@@ -20,7 +20,8 @@ describe("KanbanFactory", function () {
 
   it("Should create new kanbans", async function () {
     await this.kanbanFactory.createKanban();
-    const instance = this.kanbanFactory.kanbanInstances(1);
+    const instance = await this.kanbanFactory.kanbanInstances(1);
     expect(instance).is.not.null;
+    expect(instance).is.not.empty;
   });
 });
