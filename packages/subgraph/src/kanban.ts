@@ -21,7 +21,8 @@ export function handleAssigned(event: assigned): void {
 export function handleTaskRequested(event: taskRequested): void {
   let taskId = event.params.task_id.toHexString();
   let raiderId = event.params.raider.toHexString();
-  let taskRequest = new TaskRequest(taskId + "-" + raiderId);
+  let requestId = event.params.requestId.toHexString();
+  let taskRequest = new TaskRequest(requestId);
 
   let raider = new Raider(raiderId);
   raider.save();
