@@ -91,8 +91,8 @@ contract Kanban is ReentrancyGuard{
 
     //Task requested by a raider
     function requestTask(uint _id) public{
-        taskLog[_id].requests.push(payable(msg.sender));
         uint requestId = taskLog[_id].requests.length;
+        taskLog[_id].requests.push(payable(msg.sender));
         emit taskRequested(_id, msg.sender, requestId);
     }
 

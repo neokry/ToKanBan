@@ -6,7 +6,7 @@ dataSources:
     name: KanbanFactory
     network: rinkeby
     source:
-      address: "0x5921a7490489e96681881eE00291ec8b2ff93Be0"
+      address: "0xec4a03b2F87eF79B5a2704103496FecE8D41a051"
       abi: KanbanFactory
       startBlock: 8609900
     mapping:

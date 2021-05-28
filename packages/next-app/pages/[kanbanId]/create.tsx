@@ -1,15 +1,32 @@
-import { useState } from "react";
+import { ethers } from "ethers";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import Layout from "../../components/layout";
 import { web3 } from "../../containers";
+import { Kanban } from "../../typechain";
 
 export default function CreateTask() {
   const [title, setTitle] = useState("");
   const [details, setDetails] = useState("");
   const [funds, setFunds] = useState("");
-  const { kanbanFactory } = web3.useContainer();
+  const { selectKanban, kanban, address } = web3.useContainer();
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const { kanbanId } = router.query;
 
-  const onCreate = async () => {};
+  const onCreate = async () => {
+    setLoading(true);
+    const kb = kanban as Kanban;
+    const value = ethers.utils.parseEther(funds);
+    const tx = await kb.submitTask(value, title, details);
+    await tx.wait();
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (!kanbanId || !address) return;
+    selectKanban(kanbanId);
+  }, [kanbanId, address]);
 
   return (
     <div className="w-full h-screen">
@@ -33,7 +50,7 @@ export default function CreateTask() {
               />
               <input
                 type="number"
-                placeholder="Funds"
+                placeholder="Funds (ETH)"
                 className="bg-gray-100 w-full p-2 mt-4"
                 onChange={(e) => setFunds(e.target.value)}
                 value={funds}
