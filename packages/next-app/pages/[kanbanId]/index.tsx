@@ -25,9 +25,13 @@ export default function Kanban() {
     <div>
       <Layout>
         <div className="p-3">
-          <div className="ml-5 text-2xl font-light">
-            {kanban && kanban.title}
-          </div>
+            {kanban
+              ? <div className="mx-5 text-2xl font-light flex justify-between">
+                  <div>{kanban.title}</div>
+                  <div>Total Funds: {kanban.funds}<span className="text-base">ETH</span></div>
+                </div>
+              : <div className="mx-5 text-2xl font-light">Board loading...</div>
+          }
           <div className="flex mt-6">
             <div className="w-1/3 px-6">
               <div className="text-gray-500">New Tasks</div>
