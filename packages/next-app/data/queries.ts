@@ -20,6 +20,7 @@ export const KANBAN_BOARD_BY_ID = (id) => {
         id
         address
         title
+        funds
         description
         tasks {
           id
