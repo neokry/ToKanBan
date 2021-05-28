@@ -1,3 +1,4 @@
+import { ethers } from "ethers";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Layout from "../../components/layout";
@@ -17,6 +18,10 @@ export default function Kanban() {
     router.push("/" + kanbanId + "/create");
   };
 
+  const onFund = () => {
+    router.push("/" + kanbanId + "/funds");
+  };
+
   useEffect(() => {
     loadBoard();
   }, []);
@@ -25,13 +30,25 @@ export default function Kanban() {
     <div>
       <Layout>
         <div className="p-3">
-            {kanban
-              ? <div className="mx-5 text-2xl font-light flex justify-between">
-                  <div>{kanban.title}</div>
-                  <div>Total Funds: {kanban.funds}<span className="text-base">ETH</span></div>
+          {kanban ? (
+            <div className="mx-5 text-2xl font-light flex items-center justify-between">
+              <div>{kanban.title}</div>
+              <div className="flex items-center">
+                <div className="mr-6">
+                  Total Funds: {ethers.utils.formatEther(kanban.funds)}
+                  <span className="text-base">ETH</span>
                 </div>
-              : <div className="mx-5 text-2xl font-light">Board loading...</div>
-          }
+                <button
+                  className="text-lg border p-2 px-4 border-gray-400 rounded-lg"
+                  onClick={() => onFund()}
+                >
+                  Add Funds
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="mx-5 text-2xl font-light">Board loading...</div>
+          )}
           <div className="flex mt-6">
             <div className="w-1/3 px-6">
               <div className="text-gray-500">New Tasks</div>

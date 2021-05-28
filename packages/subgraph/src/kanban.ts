@@ -1,4 +1,4 @@
-import { dataSource } from "@graphprotocol/graph-ts";
+import { dataSource, log } from "@graphprotocol/graph-ts";
 import {
   assigned,
   taskRequested,
@@ -66,14 +66,11 @@ export function handleTaskSubmitted(event: taskSubmitted): void {
 
   let kanbanBoard = KanbanBoard.load(kanbanId);
   kanbanBoard.funds = kanbanBoard.funds.minus(event.params.funds);
+  kanbanBoard.save();
 }
 
 export function handleContractPaid(event: contractPaid): void {
   let kanbanBoard = KanbanBoard.load(kanbanId);
-
-  if (!kanbanBoard) {
-    kanbanBoard = new KanbanBoard(kanbanId);
-  }
-
   kanbanBoard.funds = event.params.fundAmount.plus(kanbanBoard.funds);
+  kanbanBoard.save();
 }

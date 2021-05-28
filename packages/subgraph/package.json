@@ -4,7 +4,7 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ neokry/tokanban --access-token ab375d1346094abd8d27d25660e29814",
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ neokry/tokanban --access-token 8cc4f1e0e9cb47a49f647a05326177c9",
     "create-local": "graph create --node http://localhost:8020/ neokry/ToKanBan",
     "remove-local": "graph remove --node http://localhost:8020/ neokry/ToKanBan",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 neokry/tokanban"
