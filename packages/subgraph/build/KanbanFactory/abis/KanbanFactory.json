@@ -33,6 +33,12 @@
       },
       {
         "indexed": false,
+        "internalType": "address",
+        "name": "pm",
+        "type": "address"
+      },
+      {
+        "indexed": false,
         "internalType": "string",
         "name": "title",
         "type": "string"
@@ -58,6 +64,11 @@
         "internalType": "string",
         "name": "_description",
         "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "_pm",
+        "type": "address"
       }
     ],
     "name": "createKanban",

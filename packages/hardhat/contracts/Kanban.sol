@@ -14,6 +14,7 @@ contract Kanban is ReentrancyGuard{
     event taskForReviewed(uint task_id);
     event taskReviewRevoke(uint task_id);
     event taskCompleted(uint task_id, uint fundReleased);
+    event contractPaid(address funder, uint fundAmount);
 
     //Globals
     using Counters for Counters.Counter;
@@ -33,6 +34,7 @@ contract Kanban is ReentrancyGuard{
         require(amount == msg.value, "Incorrect amount sent");
         funder = msg.sender;
         contractBalance += msg.value;    
+        emit contractPaid(msg.sender, msg.value);
     }
 
     //task log would record all the task within a Project/contract

@@ -23,9 +23,9 @@ const providerOptions = {
 
 function useWeb3() {
   const [modal, setModal] = useState(null);
-  const [kanban, setKanban] = useState<null | Kanban>(null);
+  const [kanban, setKanban] = useState<Kanban | null>(null);
   const [kanbanFactory, setKanbanFactory] =
-    useState<null | KanbanFactory>(null);
+    useState<KanbanFactory | null>(null);
   const [address, setAddress] = useState(null);
   const [signer, setSigner] = useState(null);
 
