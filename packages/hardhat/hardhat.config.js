@@ -1,6 +1,7 @@
 require("dotenv").config();
 require("@nomiclabs/hardhat-waffle");
 require("@typechain/hardhat");
+require("@nomiclabs/hardhat-etherscan");
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -27,5 +28,8 @@ module.exports = {
         mnemonic: process.env.MNEMONIC,
       },
     },
+  },
+  etherscan: {
+    apiKey: process.env.ETHERSCAN,
   },
 };
