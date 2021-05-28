@@ -1,11 +1,12 @@
 type KanbanBoard @entity {
   id: ID!
   creator: Bytes!
-  projectManager: Bytes
   address: Bytes
   tasks: [Task!] @derivedFrom(field: "kanban")
   title: String
   description: String
+  funds: BigInt!
+  pm: Bytes
 }
 
 type Task @entity {

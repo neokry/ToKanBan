@@ -6,8 +6,9 @@ import {
   taskForReviewed,
   taskReviewRevoke,
   taskSubmitted,
-} from "../generated/Contract/Contract";
-import { Raider, Task, TaskRequest } from "../generated/schema";
+  contractPaid,
+} from "../generated/templates/Kanban/Kanban";
+import { KanbanBoard, Raider, Task, TaskRequest } from "../generated/schema";
 
 let context = dataSource.context();
 let kanbanId = context.getString("id");
@@ -62,4 +63,17 @@ export function handleTaskSubmitted(event: taskSubmitted): void {
   task.completed = false;
 
   task.save();
+
+  let kanbanBoard = KanbanBoard.load(kanbanId);
+  kanbanBoard.funds = kanbanBoard.funds.minus(event.params.funds);
+}
+
+export function handleContractPaid(event: contractPaid): void {
+  let kanbanBoard = KanbanBoard.load(kanbanId);
+
+  if (!kanbanBoard) {
+    kanbanBoard = new KanbanBoard(kanbanId);
+  }
+
+  kanbanBoard.funds = event.params.fundAmount.plus(kanbanBoard.funds);
 }

@@ -19,7 +19,8 @@ describe("KanbanFactory", function () {
   it("Should create new kanbans", async function () {
     const title = "test title";
     const description = "test description";
-    await this.kanbanFactory.createKanban(title, description);
+    const pm = "0xa471C9508Acf13867282f36cfCe5c41D719ab78B";
+    await this.kanbanFactory.createKanban(title, description, pm);
 
     const info = await this.kanbanFactory.kanbanInfo(1);
     expect(info.instance).is.not.null;

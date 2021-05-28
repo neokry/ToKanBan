@@ -1,4 +1,4 @@
-import { DataSourceContext } from "@graphprotocol/graph-ts";
+import { BigInt, DataSourceContext } from "@graphprotocol/graph-ts";
 import { kanbanCreated } from "../generated/KanbanFactory/KanbanFactory";
 import { KanbanBoard } from "../generated/schema";
 import { Kanban } from "../generated/templates";
@@ -11,6 +11,8 @@ export function handleKanbanCreated(event: kanbanCreated): void {
   kanbanBoard.address = event.params.instance;
   kanbanBoard.title = event.params.title;
   kanbanBoard.description = event.params.description;
+  kanbanBoard.pm = event.params.pm;
+  kanbanBoard.funds = BigInt.fromI32(0);
   kanbanBoard.save();
 
   let context = new DataSourceContext();

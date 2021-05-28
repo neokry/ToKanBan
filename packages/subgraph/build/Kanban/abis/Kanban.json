@@ -23,6 +23,25 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "address",
+        "name": "funder",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "fundAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "contractPaid",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
         "internalType": "uint256",
         "name": "task_id",
         "type": "uint256"

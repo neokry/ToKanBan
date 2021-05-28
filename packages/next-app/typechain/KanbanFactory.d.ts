@@ -21,13 +21,13 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface KanbanFactoryInterface extends ethers.utils.Interface {
   functions: {
-    "createKanban(string,string)": FunctionFragment;
+    "createKanban(string,string,address)": FunctionFragment;
     "kanbanInfo(uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "createKanban",
-    values: [string, string]
+    values: [string, string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "kanbanInfo",
@@ -41,7 +41,7 @@ interface KanbanFactoryInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "kanbanInfo", data: BytesLike): Result;
 
   events: {
-    "kanbanCreated(uint256,address,address,string,string)": EventFragment;
+    "kanbanCreated(uint256,address,address,address,string,string)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "kanbanCreated"): EventFragment;
@@ -94,6 +94,7 @@ export class KanbanFactory extends BaseContract {
     createKanban(
       _title: string,
       _description: string,
+      _pm: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -112,6 +113,7 @@ export class KanbanFactory extends BaseContract {
   createKanban(
     _title: string,
     _description: string,
+    _pm: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -130,6 +132,7 @@ export class KanbanFactory extends BaseContract {
     createKanban(
       _title: string,
       _description: string,
+      _pm: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -150,14 +153,16 @@ export class KanbanFactory extends BaseContract {
       id?: null,
       creator?: null,
       instance?: null,
+      pm?: null,
       title?: null,
       description?: null
     ): TypedEventFilter<
-      [BigNumber, string, string, string, string],
+      [BigNumber, string, string, string, string, string],
       {
         id: BigNumber;
         creator: string;
         instance: string;
+        pm: string;
         title: string;
         description: string;
       }
@@ -168,6 +173,7 @@ export class KanbanFactory extends BaseContract {
     createKanban(
       _title: string,
       _description: string,
+      _pm: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -181,6 +187,7 @@ export class KanbanFactory extends BaseContract {
     createKanban(
       _title: string,
       _description: string,
+      _pm: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

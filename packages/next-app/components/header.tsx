@@ -1,15 +1,23 @@
+import { useRouter } from "next/router";
 import web3 from "../containers/web3";
 
 export default function Header() {
   const { authenticate, address } = web3.useContainer();
+  const router = useRouter();
 
   const onConnect = async () => {
     await authenticate();
   };
 
+  const onHome = () => {
+    router.push("/");
+  };
+
   return (
     <div className="flex bg-gray-200 w-full px-8 py-3 justify-between items-center">
-      <div className="font-bold">ToKanBan</div>
+      <button className="font-bold" onClick={() => onHome()}>
+        ToKanBan
+      </button>
       {address ? (
         <div className="flex">
           <div

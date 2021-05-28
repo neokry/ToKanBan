@@ -4,10 +4,11 @@ pragma solidity >=0.7.0 <=0.8.0;
 
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "./Kanban.sol";
 
 contract KanbanFactory {
 
-  event kanbanCreated(uint id, address creator, address instance, string title, string description);
+  event kanbanCreated(uint id, address creator, address instance, address pm, string title, string description);
 
   using Counters for Counters.Counter;
 
@@ -25,13 +26,14 @@ contract KanbanFactory {
     baseKanbanAddress = _baseKanbanAddress;
   }
 
-  function createKanban(string memory _title, string memory _description) public {
+  function createKanban(string memory _title, string memory _description, address _pm) public {
     _kanbanIds.increment();
     address instance = Clones.clone(baseKanbanAddress);
     kanbanInfo[_kanbanIds.current()].instance = instance;
     kanbanInfo[_kanbanIds.current()].title = _title;
     kanbanInfo[_kanbanIds.current()].description = _description;
-    emit kanbanCreated(_kanbanIds.current(), msg.sender, instance, _title, _description);
+    Kanban(instance).setPM(_pm);
+    emit kanbanCreated(_kanbanIds.current(), msg.sender, instance, _pm, _title, _description);
   }
 
 }
