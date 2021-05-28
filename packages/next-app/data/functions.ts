@@ -23,10 +23,16 @@ export const getKanbanBoardById = async (id) => {
   return kanban;
 };
 
-export const getTaskRequests = async (taskId) => {
+export const getTaskRequests = async (taskId, kanbanId) => {
   // Collect kanban board
-  let requests = await client.request(TASK_REQUESTS_BY_TASK_ID(taskId));
-  requests = requests.requests;
+  let requests = await client.request(
+    TASK_REQUESTS_BY_TASK_ID(taskId, kanbanId)
+  );
+
+  requests = requests.tasks[0].requests;
+  requests = requests.map((x) => {
+    return { raider: x.raider.id, requestId: x.id };
+  });
 
   // Return kanban board
   return requests;

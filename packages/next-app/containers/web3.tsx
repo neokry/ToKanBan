@@ -9,6 +9,7 @@ import {
   KanbanFactory,
 } from "../typechain";
 import WalletConnectProvider from "@walletconnect/web3-provider"; // WalletConnectProvider (Web3Modal)
+import { getKanbanBoardById } from "../data/functions";
 
 // Web3Modal provider options
 const providerOptions = {
@@ -65,8 +66,9 @@ function useWeb3() {
     setKanbanFactory(kbFactory);
   };
 
-  const selectKanban = async (instance) => {
-    const kb = KanbanContact.connect(instance, signer);
+  const selectKanban = async (kanbanId) => {
+    const info = await getKanbanBoardById(kanbanId);
+    const kb = KanbanContact.connect(info.address, signer);
     setKanban(kb);
   };
 

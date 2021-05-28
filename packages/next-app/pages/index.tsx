@@ -36,12 +36,14 @@ export default function Home() {
                 id={kb.id}
               />
             ))}
-          <button
-            onClick={() => onCreate()}
-            className="w-1/3 h-40 m-3 border shadow-lg text-6xl text-gray-300 flex items-center justify-around"
-          >
-            +
-          </button>
+          <div className="w-1/3 h-52 p-4">
+            <button
+              onClick={() => onCreate()}
+              className="w-full h-full border shadow-lg text-6xl text-gray-300 flex items-center justify-around"
+            >
+              +
+            </button>
+          </div>
         </div>
       </Layout>
     </div>
@@ -52,14 +54,16 @@ function KanbanPlacard({ title, description, id }) {
   const router = useRouter();
 
   return (
-    <button
-      className="w-1/3 p-6 h-40 m-3 border shadow-lg"
-      onClick={() => {
-        router.push("/" + id);
-      }}
-    >
-      <div className="text-2xl font-light">{title}</div>
-      <div className="mt-2 text-gray-500">{description}</div>
-    </button>
+    <div className="w-1/3 h-52 p-4">
+      <button
+        className="w-full p-2 h-full border shadow-lg"
+        onClick={() => {
+          router.push("/" + id);
+        }}
+      >
+        <div className="text-2xl font-light">{title}</div>
+        <div className="mt-2 text-gray-500">{description}</div>
+      </button>
+    </div>
   );
 }

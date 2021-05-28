@@ -18,15 +18,22 @@ export const KANBAN_BOARD_BY_ID = (id) => {
     {
       kanbanBoard(id: "${id}") {
         id
+        pm
         address
         title
         funds
         description
         tasks {
+          requests {
+            raider {
+              id
+            }
+          }
           id
           title
           detail
           funds
+          completed
           raider {
             id
           }
@@ -36,11 +43,12 @@ export const KANBAN_BOARD_BY_ID = (id) => {
   `;
 };
 
-export const TASK_REQUESTS_BY_TASK_ID = (id) => {
+export const TASK_REQUESTS_BY_TASK_ID = (taskId, kanbanId) => {
   return gql`
     {
-        task(id: "${id}") {
+        tasks(where: { id: "${taskId}", kanban: "${kanbanId}" }) {
             requests {
+                id
                 raider {
                     id
                 }
