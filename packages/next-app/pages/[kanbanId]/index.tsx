@@ -5,6 +5,7 @@ import Layout from "../../components/layout";
 import { web3 } from "../../containers";
 import { getKanbanBoardById } from "../../data/functions";
 import { Kanban } from "../../typechain";
+import TaskRequests from "./[taskId]/requests";
 
 export default function KanbanBoard() {
   const router = useRouter();
@@ -100,6 +101,15 @@ export default function KanbanBoard() {
             </div>
             <div className="w-1/3 px-6">
               <div className="text-gray-500">In Progress</div>
+              {inProgressTasks &&
+                inProgressTasks.map((task) => (
+                  <ProgressTask
+                    task={task}
+                    isPM={isPM}
+                    kanban={kanban}
+                    taskForReview={(data) => setForReviewTasks(data)}
+                  />
+                ))}
             </div>
             <div className="w-1/3 px-6">
               <div className="text-gray-500">For Review</div>
@@ -165,6 +175,32 @@ function NewTask({ task, isPM, kanban, address }) {
           {loading ? "Requesting Task..." : "Request Task"}
         </button>
       )}
+    </div>
+  );
+}
+
+function ProgressTask({ task, kanban, isPM, taskForReview }) {
+  const { id, title, detail, requests, funds,raider } = task;
+  const [loading, setLoading] = useState(false);
+  
+  const onSubmitTask = async () => {
+    const kb = kanban as Kanban;
+    const tasklog = await kb.taskLog(id); 
+    taskForReview(tasklog.reviewed);
+  };
+
+  return (
+    <div className="h-40 w-full p-3 m-2 border text-gray-400">
+      <div className="text-2xl text-black">{title}</div>
+      <div className="h-6">{detail}</div>
+      <div className="h-6">{raider.id}</div>
+      <div className="text-sm mt-2">{ethers.utils.formatEther(funds)} ETH</div>
+      <button
+          onClick={() => onSubmitTask()}
+          className="w-full mt-4 bg-blue-400 text-white p-2"
+      >
+          Submit Task
+        </button>
     </div>
   );
 }
