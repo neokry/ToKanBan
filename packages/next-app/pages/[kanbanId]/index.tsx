@@ -105,9 +105,7 @@ export default function KanbanBoard() {
                 inProgressTasks.map((task) => (
                   <ProgressTask
                     task={task}
-                    isPM={isPM}
                     kanban={kanban}
-                    taskForReview={(data) => setForReviewTasks(data)}
                   />
                 ))}
             </div>
@@ -179,14 +177,14 @@ function NewTask({ task, isPM, kanban, address }) {
   );
 }
 
-function ProgressTask({ task, kanban, isPM, taskForReview }) {
+function ProgressTask({ task, kanban, }) {
   const { id, title, detail, requests, funds,raider } = task;
   const [loading, setLoading] = useState(false);
   
   const onSubmitTask = async () => {
     const kb = kanban as Kanban;
     const tasklog = await kb.taskLog(id); 
-    taskForReview(tasklog.reviewed);
+    tasklog.reviewed;
   };
 
   return (
