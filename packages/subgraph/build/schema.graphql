@@ -11,6 +11,7 @@ type KanbanBoard @entity {
 
 type Task @entity {
   id: ID!
+  taskID: String!
   kanban: KanbanBoard!
   funds: BigInt!
   title: String

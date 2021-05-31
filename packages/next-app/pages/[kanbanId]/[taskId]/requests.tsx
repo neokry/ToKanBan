@@ -23,8 +23,8 @@ export default function TaskRequests() {
   };
 
   const load = async () => {
-    const reqs = await getTaskRequests(taskId, kanbanId);
-    if (reqs) {
+    const reqs = await getTaskRequests(taskId as string, kanbanId as string);
+    if (reqs.length > 0) {
       setRequests(reqs);
       console.log("reqs", reqs);
       setSelectedRequest(reqs[0].requestId);
@@ -61,9 +61,17 @@ export default function TaskRequests() {
                   ))}
               </select>
             </div>
-            <div className="flex justify-end w-full">
+            <div className="flex justify-end w-full mt-6">
               <button
-                className="text-white bg-blue-400 p-2 px-9 mt-6"
+                className="p-2 px-9 border mr-4"
+                onClick={() => {
+                  router.push("/" + kanbanId);
+                }}
+              >
+                Go Back
+              </button>
+              <button
+                className="text-white bg-blue-400 p-2 px-9"
                 onClick={() => {
                   onSelect();
                 }}
