@@ -3,10 +3,12 @@ import Header from "../components/header";
 import Layout from "../components/layout";
 import { getKanbanBoards } from "../data/functions";
 import { useRouter } from "next/router";
+import { web3 } from "../containers";
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
   const [kanbans, setKanbans] = useState<any[] | null>(null);
+  const { address } = web3.useContainer();
   const router = useRouter();
 
   const loadBoards = async () => {
@@ -36,14 +38,16 @@ export default function Home() {
                 id={kb.id}
               />
             ))}
-          <div className="w-1/3 h-52 p-4">
-            <button
-              onClick={() => onCreate()}
-              className="w-full h-full border shadow-lg text-6xl text-gray-300 flex items-center justify-around"
-            >
-              +
-            </button>
-          </div>
+          {address && (
+            <div className="w-1/3 h-52 p-4">
+              <button
+                onClick={() => onCreate()}
+                className="w-full h-full border shadow-lg text-6xl text-gray-300 flex items-center justify-around"
+              >
+                +
+              </button>
+            </div>
+          )}
         </div>
       </Layout>
     </div>

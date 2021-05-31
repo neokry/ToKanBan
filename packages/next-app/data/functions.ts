@@ -23,10 +23,10 @@ export const getKanbanBoardById = async (id) => {
   return kanban;
 };
 
-export const getTaskRequests = async (taskId, kanbanId) => {
+export const getTaskRequests = async (taskId: string, kanbanId: string) => {
   // Collect kanban board
   let requests = await client.request(
-    TASK_REQUESTS_BY_TASK_ID(taskId, kanbanId)
+    TASK_REQUESTS_BY_TASK_ID(taskId + kanbanId)
   );
 
   requests = requests.tasks[0].requests;

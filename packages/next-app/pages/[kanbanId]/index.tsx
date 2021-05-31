@@ -14,16 +14,25 @@ export default function KanbanBoard() {
   const [kanbanInfo, setKanbanInfo] = useState(null);
   const [newTasks, setNewTasks] = useState(null);
   const [inProgressTasks, setInProgressTasks] = useState(null);
-  const [forReviewTasks, setForReviewTasks] = useState(null);
+  const [inReviewTasks, setInReviewTasks] = useState(null);
   const [completedTasks, setCompletedTasks] = useState(null);
   const { address } = web3.useContainer();
 
   const loadBoard = async () => {
     const kb = await getKanbanBoardById(kanbanId);
+
     const newTasks = kb.tasks.filter((x) => x.raider == null);
     setNewTasks(newTasks);
+
     const inProgress = kb.tasks.filter((x) => x.raider && !x.reviewed);
     setInProgressTasks(inProgress);
+
+    const inReview = kb.tasks.filter((x) => x.reviewed && !x.completed);
+    setInReviewTasks(inReview);
+
+    const completed = kb.tasks.filter((x) => x.completed);
+    setCompletedTasks(completed);
+
     setKanbanInfo(kb);
   };
 
@@ -89,6 +98,7 @@ export default function KanbanBoard() {
                     isPM={isPM}
                     kanban={kanban}
                     address={address}
+                    loadBoard={loadBoard}
                   />
                 ))}
               <button
@@ -100,12 +110,32 @@ export default function KanbanBoard() {
             </div>
             <div className="w-1/3 px-6">
               <div className="text-gray-500">In Progress</div>
+              {inProgressTasks &&
+                inProgressTasks.map((task) => (
+                  <InProgressTask
+                    task={task}
+                    kanban={kanban}
+                    address={address}
+                    loadBoard={loadBoard}
+                  />
+                ))}
             </div>
             <div className="w-1/3 px-6">
               <div className="text-gray-500">For Review</div>
+              {inReviewTasks &&
+                inReviewTasks.map((task) => (
+                  <InReviewTask
+                    task={task}
+                    isPM={isPM}
+                    kanban={kanban}
+                    loadBoard={loadBoard}
+                  />
+                ))}
             </div>
             <div className="w-1/3 px-6">
               <div className="text-gray-500">Completed</div>
+              {completedTasks &&
+                completedTasks.map((task) => <CompletedTask task={task} />)}
             </div>
           </div>
         </div>
@@ -114,23 +144,24 @@ export default function KanbanBoard() {
   );
 }
 
-function NewTask({ task, isPM, kanban, address }) {
+function NewTask({ task, isPM, kanban, address, loadBoard }) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { kanbanId } = router.query;
-  const { id, title, detail, requests, funds } = task;
+  const { taskID, title, detail, requests, funds } = task;
   const [hasRequest, setHasRequest] = useState(false);
 
   const onRequest = async () => {
     setLoading(true);
     const kb = kanban as Kanban;
-    const tx = await kb.requestTask(id);
+    const tx = await kb.requestTask(taskID);
     await tx.wait();
     setLoading(false);
+    await loadBoard();
   };
 
   const onViewRequests = () => {
-    router.push("/" + kanbanId + "/" + id + "/requests");
+    router.push("/" + kanbanId + "/" + taskID + "/requests");
   };
 
   useEffect(() => {
@@ -158,13 +189,93 @@ function NewTask({ task, isPM, kanban, address }) {
           Task Requested
         </div>
       ) : (
+        address && (
+          <button
+            onClick={() => onRequest()}
+            className="w-full mt-4 bg-blue-400 text-white p-2"
+          >
+            {loading ? "Requesting Task..." : "Request Task"}
+          </button>
+        )
+      )}
+    </div>
+  );
+}
+
+function InProgressTask({ task, kanban, address, loadBoard }) {
+  const [loading, setLoading] = useState(false);
+  const { taskID, title, detail, requests, funds, raider } = task;
+  const [isRaider, setIsRaider] = useState(false);
+
+  const onSendReview = async () => {
+    setLoading(true);
+    const kb = kanban as Kanban;
+    const tx = await kb.taskForReview(taskID);
+    await tx.wait();
+    setLoading(false);
+    await loadBoard();
+  };
+
+  useEffect(() => {
+    const tmp = ethers.utils.getAddress(raider.id);
+    if (tmp.localeCompare(address) === 0) setIsRaider(true);
+  }, [address, requests]);
+
+  return (
+    <div className="h-40 w-full p-3 m-2 border text-gray-400">
+      <div className="text-2xl text-black">{title}</div>
+      <div className="h-6">{detail}</div>
+      <div className="text-sm mt-2">{ethers.utils.formatEther(funds)} ETH</div>
+      {isRaider && (
         <button
-          onClick={() => onRequest()}
+          onClick={() => onSendReview()}
           className="w-full mt-4 bg-blue-400 text-white p-2"
         >
-          {loading ? "Requesting Task..." : "Request Task"}
+          {loading ? "Sending For Review..." : "Send For Review"}
         </button>
       )}
+    </div>
+  );
+}
+
+function InReviewTask({ task, isPM, kanban, loadBoard }) {
+  const [loading, setLoading] = useState(false);
+  const { taskID, title, detail, funds } = task;
+
+  const onSendReview = async () => {
+    setLoading(true);
+    const kb = kanban as Kanban;
+    const tx = await kb.taskApproved(taskID);
+    await tx.wait();
+    setLoading(false);
+    await loadBoard();
+  };
+
+  return (
+    <div className="h-40 w-full p-3 m-2 border text-gray-400">
+      <div className="text-2xl text-black">{title}</div>
+      <div className="h-6">{detail}</div>
+      <div className="text-sm mt-2">{ethers.utils.formatEther(funds)} ETH</div>
+      {isPM && (
+        <button
+          onClick={() => onSendReview()}
+          className="w-full mt-4 bg-blue-400 text-white p-2"
+        >
+          {loading ? "Completing Task..." : "Complete Task"}
+        </button>
+      )}
+    </div>
+  );
+}
+
+function CompletedTask({ task }) {
+  const { title, detail, funds } = task;
+
+  return (
+    <div className="h-40 w-full p-3 m-2 border text-gray-400">
+      <div className="text-2xl text-black">{title}</div>
+      <div className="h-6">{detail}</div>
+      <div className="text-sm mt-2">{ethers.utils.formatEther(funds)} ETH</div>
     </div>
   );
 }

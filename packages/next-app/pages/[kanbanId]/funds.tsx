@@ -40,9 +40,17 @@ export default function Funds() {
                 onChange={(e) => setFunds(e.target.value)}
                 value={funds}
               />
-              <div className="flex justify-end w-full">
+              <div className="flex justify-end w-full mt-6">
                 <button
-                  className="text-white bg-blue-400 p-2 px-9 mt-6"
+                  className="p-2 px-9 border mr-4"
+                  onClick={() => {
+                    router.push("/" + kanbanId);
+                  }}
+                >
+                  Go Back
+                </button>
+                <button
+                  className="text-white bg-blue-400 p-2 px-9"
                   onClick={() => {
                     onFund();
                   }}
